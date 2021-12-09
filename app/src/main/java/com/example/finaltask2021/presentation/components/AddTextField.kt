@@ -8,6 +8,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -20,9 +21,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddTextField(
-    state: MutableState<TextFieldValue>,
+    label: String? = "Text: ",
+    state: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue()),
     onChange: (String) -> Unit = {},
-    onEnter: (String) -> Unit = {}
+    onAdd: (String) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardManager = LocalSoftwareKeyboardController.current
@@ -36,17 +38,19 @@ fun AddTextField(
             .fillMaxWidth()
             .wrapContentHeight(),
         label = {
-            Text("Search: ${state.value.text}")
+            if (label != null) {
+                Text("${label.capitalize()}: ${state.value.text}")
+            }
         },
         keyboardOptions = KeyboardOptions(
             autoCorrect = true,
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Search
+            imeAction = ImeAction.Done
         ),
-        keyboardActions = KeyboardActions(onSearch = {
+        keyboardActions = KeyboardActions(onDone = {
             keyboardManager?.hide()
             focusManager.moveFocus(FocusDirection.Next)
-            onEnter(state.value.text)
+            onAdd(state.value.text)
         }),
         singleLine = true,
         maxLines = 1

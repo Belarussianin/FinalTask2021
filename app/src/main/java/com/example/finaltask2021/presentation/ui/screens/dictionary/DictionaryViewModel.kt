@@ -37,26 +37,24 @@ class DictionaryViewModel(
 
     private val _searchText = MutableStateFlow("")
 
-    val wordListState: StateFlow<UiState<List<Word>>> get() = _wordListState
-
-//    : Flow<UiState<List<Word>>> = combine(
-//        _wordListState,
-//        _searchText
-//    ) { wordsList, searchedText ->
-//        if (searchedText.isBlank() || wordsList.data == null) {
-//            wordsList
-//        } else {
-//            val resultList = mutableListOf<Word>()
-//            for (word in wordsList.data) {
-//                if (word.word.lowercase(Locale.getDefault())
-//                        .contains(searchedText.lowercase(Locale.getDefault()))
-//                ) {
-//                    resultList.add(word)
-//                }
-//            }
-//            UiState(isLoading = false, data = resultList.toList())
-//        }
-//    }
+    val wordListState: Flow<UiState<List<Word>>> = combine(
+        _wordListState,
+        _searchText
+    ) { wordsList, searchedText ->
+        if (searchedText.isBlank() || wordsList.data == null) {
+            wordsList
+        } else {
+            val resultList = mutableListOf<Word>()
+            for (word in wordsList.data) {
+                if (word.word.lowercase(Locale.getDefault())
+                        .contains(searchedText.lowercase(Locale.getDefault()))
+                ) {
+                    resultList.add(word)
+                }
+            }
+            UiState(isLoading = false, data = resultList.toList())
+        }
+    }
 
     private val _expandedCardWordsList = MutableStateFlow(listOf<String>())
     val expandedCardWordsList: StateFlow<List<String>> get() = _expandedCardWordsList
