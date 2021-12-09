@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import com.example.finaltask2021.presentation.ui.screens.about.AboutScreen
 import com.example.finaltask2021.presentation.ui.screens.dictionary.DictionaryScreen
 import com.example.finaltask2021.presentation.ui.screens.home.HomeScreen
+import com.example.finaltask2021.presentation.ui.screens.notes.AddNoteScreen
 import com.example.finaltask2021.presentation.ui.screens.words.WordScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -30,6 +31,13 @@ fun MainNavHost(
     ) {
         composable(MainNavTargets.HomeScreen.name) {
             HomeScreen { navigateTo ->
+                scope.launch {
+                    navController.navigate(navigateTo)
+                }
+            }
+        }
+        composable(MainNavTargets.AddNoteScreen.name) {
+            AddNoteScreen { navigateTo ->
                 scope.launch {
                     navController.navigate(navigateTo)
                 }

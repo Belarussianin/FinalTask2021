@@ -42,6 +42,10 @@ fun MainNavDrawerContent(
                 Text(text = "To ${MainNavTargets.HomeScreen.name}")
             }
             Spacer(modifier = Modifier.height(innerPadding))
+            Button(onClick = { onNavigateClick(MainNavTargets.AddNoteScreen.name) }) {
+                Text(text = "To ${MainNavTargets.AddNoteScreen.name}")
+            }
+            Spacer(modifier = Modifier.height(innerPadding))
             Button(onClick = { onNavigateClick(MainNavTargets.WordScreen.name) }) {
                 Text(text = "To ${MainNavTargets.WordScreen.name}")
             }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.finaltask2021.domain.use_case.SaveWordUseCase
 
 class AddNoteViewModel(
-    private val saveWordUseCase: SaveWordUseCase
+    //private val saveWordUseCase: SaveWordUseCase
 ): ViewModel() {
 
 }
