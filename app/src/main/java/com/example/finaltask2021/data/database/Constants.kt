@@ -8,3 +8,4 @@ const val DATABASE_VERSION = 1
 const val TABLE_NAME = "local_words_table"
 const val COLUMN_NAME_ID = "words_ids"
 const val COLUMN_NAME_WORD = "words_word"
+const val COLUMN_NAME_DEFINITION = "words_definition"

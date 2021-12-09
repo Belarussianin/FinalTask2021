@@ -1,6 +1,8 @@
 package com.example.finaltask2021.common
 
 import android.app.Activity
+import android.content.Context
+import android.util.Log
 import androidx.compose.animation.core.snap
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.material.ExperimentalMaterialApi
@@ -23,56 +25,58 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.window.layout.WindowMetricsCalculator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-@ExperimentalMaterialApi
-fun Modifier.swipeableLeftRight(onLeft: () -> Unit, onRight: () -> Unit): Modifier = composed {
-    var width by rememberSaveable { mutableStateOf(0f) }
-    val swipeableState = rememberSwipeableState(
-        SwipeDirection.Initial,
-        animationSpec = snap()
-    )
-    val anchorWidth = remember(width) {
-        if (width == 0f) {
-            1f
-        } else {
-            width
+//searchResultState.value?.let { wordSearchState ->
+//            when (wordSearchState.isLoading) {
+//                true -> {
+//                    CircularProgressIndicator()
+//                }
+//                false -> {
+//                    wordSearchState.data?.let {
+//                        WordCard(word = it)
+//                    }
+//                    if (wordSearchState.data == null) {
+//                        Column {
+//                            Text(wordSearchState.error)
+//                            Button(onClick = { viewModel.onRightSwipe(Word("")) }) {
+//                                Text("Refresh")
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+@Composable
+fun <T> UiState<T>.Process(
+    onLoading: @Composable () -> Unit,
+    onReady: @Composable (data: T) -> Unit,
+    onError: @Composable (error: String) -> Unit
+) where T : Any {
+    when (isLoading) {
+        true -> {
+            onLoading()
         }
-    }
-    val scope = rememberCoroutineScope()
-    if (swipeableState.isAnimationRunning) {
-        DisposableEffect(Unit) {
-            onDispose {
-                when (swipeableState.currentValue) {
-                    SwipeDirection.Left -> {
-                        onLeft()
-                    }
-                    SwipeDirection.Right -> {
-                        onRight()
-                    }
-                    else -> {
-                        return@onDispose
-                    }
-                }
-                scope.launch {
-                    swipeableState.snapTo(SwipeDirection.Initial)
-                }
+        false -> {
+            data?.let {
+                onReady(it)
+            }
+            if (data == null) {
+                onError(error)
             }
         }
     }
-    return@composed Modifier
-        .onSizeChanged { width = it.width.toFloat() }
-        .swipeable(
-            state = swipeableState,
-            anchors = mapOf(
-                0f to SwipeDirection.Left,
-                anchorWidth / 2 to SwipeDirection.Initial,
-                anchorWidth to SwipeDirection.Right,
-            ),
-            thresholds = { _, _ -> FractionalThreshold(0.3f) },
-            orientation = Orientation.Horizontal
-        )
 }
 
 @Composable
@@ -88,7 +92,7 @@ fun Activity.windowSize(): DpSize {
 }
 
 @Composable
-fun Activity.rememberWindowSizeClass() {
+fun Activity.rememberWindowSize() {
     val configuration = LocalConfiguration.current
     val windowMetrics = remember(configuration) {
         WindowMetricsCalculator.getOrCreate()

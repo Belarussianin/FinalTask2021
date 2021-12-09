@@ -8,10 +8,11 @@ import retrofit2.http.Path
 interface WordsApi {
 
     @GET("?random=true")
-    @Headers("x-rapidapi-key:0032250002msh971b33ed3d93564p1ca791jsn1f64912e1c9f", "x-rapidapi-host:wordsapiv1.p.rapidapi.com")
+    @Headers("x-rapidapi-key:$API_KEY", "x-rapidapi-host:$HOST_URL")
     suspend fun getRandomWord(): WordDto
 
     @GET("{word}")
+    @Headers("x-rapidapi-key:$API_KEY", "x-rapidapi-host:$HOST_URL")
     suspend fun getWord(@Path(value="word") word: String): WordDto
 
 }

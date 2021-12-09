@@ -7,18 +7,20 @@ import com.example.finaltask2021.domain.model.Word
 import com.example.finaltask2021.domain.model.WordDetailed
 import com.example.finaltask2021.domain.model.toWord
 import com.example.finaltask2021.domain.repository.WordRepository
-import kotlin.random.Random
+import kotlinx.coroutines.flow.Flow
 
-class WordRepositoryImpl(private val wordsDao: WordsDao, private val wordsApi: WordsApi) : WordRepository {
+class WordRepositoryImpl(private val wordsDao: WordsDao, private val wordsApi: WordsApi) :
+    WordRepository {
 
     //TODO("Save in cache or make call throw API")
 
     override suspend fun getRandomWord(): Word {
-        return wordsDao.getById(0) ?: wordsApi.getRandomWord().toWord()
+        //return wordsDao.getById(0) ?:
+        return wordsApi.getRandomWord().toWord()
     }
 
     override suspend fun getWord(word: String): Word {
-        return wordsDao.get(word) ?: wordsApi.getWord(word).toWord()
+        return wordsApi.getWord(word).toWord()
     }
 
     override suspend fun getRandomWordDetailed(): WordDetailed {
@@ -35,5 +37,26 @@ class WordRepositoryImpl(private val wordsDao: WordsDao, private val wordsApi: W
 
     override suspend fun getWordDto(): WordDto {
         TODO("Not yet implemented")
+    }
+
+
+    override suspend fun getAllWordsFromCache(): Flow<List<Word>> {
+        return wordsDao.getAll()
+    }
+
+//    override suspend fun getByIdWordFromCache(id: Int): Word? {
+//        return wordsDao.getById(id)
+//    }
+
+    override suspend fun getWordFromCache(word: String): Word? {
+        return wordsDao.get(word)
+    }
+
+    override suspend fun insertWordInCache(word: Word) {
+        wordsDao.insert(word)
+    }
+
+    override suspend fun deleteWordInCache(word: String) {
+        wordsDao.delete(word)
     }
 }

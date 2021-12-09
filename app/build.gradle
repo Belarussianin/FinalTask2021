@@ -40,7 +40,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.5.21'
     }
     packagingOptions {
         resources {
@@ -71,9 +70,13 @@ dependencies {
     // Jetpack Compose
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 
+    // Moshi
+    implementation ("com.squareup.moshi:moshi-kotlin:1.12.0")
+    kapt ("com.squareup.moshi:moshi-kotlin-codegen:1.12.0")
+
     // Retrofit2
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
-    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofit_version")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttp_version")
 
     // Room components
@@ -84,6 +87,9 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil:$coil_version")
     implementation("io.coil-kt:coil-gif:$coil_gif_version")
+
+    // Preferences DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

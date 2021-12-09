@@ -1,7 +1,8 @@
 package com.example.finaltask2021.presentation.navigation
 
-enum class MainNavTarget {
+enum class MainNavTargets {
     HomeScreen,
     WordScreen,
+    DictionaryScreen,
     AboutScreen;
 }

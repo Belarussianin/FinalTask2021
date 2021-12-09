@@ -12,5 +12,9 @@ data class Result(
     val partOf: List<String>?,
     val partOfSpeech: String?,
     val synonyms: List<String>?,
-    val typeOf: List<String>?
+    val typeOf: List<String>?,
+    val antonyms: List<String>?,
+    val similarTo: List<String>?,
+    val hasMembers: List<String>?,
+    val memberOf: List<String>?,
 )

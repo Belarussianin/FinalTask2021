@@ -65,10 +65,12 @@ abstract class WordsDatabase : RoomDatabase() {
         fun getSampleList() = listOf<Word>(
             Word(
                 word = "example",
+                definition = "something",
                 results = null
             ),
             Word(
                 word = "semen",
+                definition = "lol. idiot",
                 results = null
             )
         )
