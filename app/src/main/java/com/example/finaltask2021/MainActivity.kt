@@ -7,10 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropScaffoldState
 import androidx.compose.material.BackdropValue
+import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -21,13 +23,18 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +47,7 @@ import com.example.finaltask2021.presentation.navigation.MainNavHost
 import com.example.finaltask2021.presentation.navigation.MainNavTargets
 import com.example.finaltask2021.presentation.ui.screens.home.HomeScreen
 import com.example.finaltask2021.presentation.ui.theme.FinalTask2021Theme
+import com.example.finaltask2021.presentation.ui.theme.primaryLightColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -61,6 +69,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val scope = rememberCoroutineScope()
+            val localFocusManager = LocalFocusManager.current
             val darkThemeSettingState = viewModel.isDarkTheme.collectAsState()
             val innerPadding = 16.dp
 
@@ -72,6 +81,8 @@ class MainActivity : ComponentActivity() {
 
             val scaffoldState = rememberScaffoldState()
             val backDropScaffoldState = rememberBackdropScaffoldState(BackdropValue.Concealed)
+
+            if (scaffoldState.drawerState.isOpen) localFocusManager.clearFocus(true)
 
             when (isDark) {
                 null -> {}
@@ -100,28 +111,19 @@ class MainActivity : ComponentActivity() {
                                     title = {
                                         Text("Words app")
                                     },
-                                    navigationIcon = {
-                                        IconButton(
-                                            onClick = {
-                                                scope.launch {
-                                                    if (scaffoldState.drawerState.isClosed) {
-                                                        scaffoldState.drawerState.open()
-                                                    } else {
-                                                        scaffoldState.drawerState.close()
-                                                    }
-                                                }
+                                    isNavOpen = scaffoldState.drawerState.isOpen,
+                                    isSettingsOpen = backDropScaffoldState.isRevealed,
+                                    openNavigation = {
+                                        scope.launch {
+                                            with(scaffoldState.drawerState) {
+                                                if (it) open() else close()
                                             }
-                                        ) {
-                                            if (scaffoldState.drawerState.isClosed) {
-                                                Icon(
-                                                    Icons.Default.Menu,
-                                                    contentDescription = "Menu"
-                                                )
-                                            } else {
-                                                Icon(
-                                                    Icons.Default.Close,
-                                                    contentDescription = "Close"
-                                                )
+                                        }
+                                    },
+                                    openSettings = {
+                                        scope.launch {
+                                            with(backDropScaffoldState) {
+                                                if (it) reveal() else conceal()
                                             }
                                         }
                                     }
@@ -172,7 +174,8 @@ class MainActivity : ComponentActivity() {
                     scaffoldState = backDropScaffoldState,
                     appBar = appBar,
                     backLayerContent = backLayerContent,
-                    frontLayerContent = frontLayerContent
+                    frontLayerContent = frontLayerContent,
+                    gesturesEnabled = false
                 )
             }
         )
@@ -182,13 +185,44 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainAppBar(
     title: @Composable () -> Unit,
-    navigationIcon: @Composable (() -> Unit)?
+    isNavOpen: Boolean = false,
+    isSettingsOpen: Boolean = false,
+    openNavigation: (Boolean) -> Unit = {},
+    openSettings: (Boolean) -> Unit = {}
 ) {
     TopAppBar(
-        title = title,
-        navigationIcon = navigationIcon,
+        elevation = 4.dp,
         backgroundColor = Color.Transparent,
-        elevation = 0.dp
+        title = title,
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    openNavigation(!isNavOpen)
+                }
+            ) {
+                if (isNavOpen) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Close"
+                    )
+                } else {
+                    Icon(
+                        Icons.Default.Menu,
+                        contentDescription = "Menu"
+                    )
+
+                }
+            }
+        },
+        actions = {
+            IconButton(
+                onClick = {
+                    openSettings(!isSettingsOpen)
+                }
+            ) {
+                Icon(Icons.Filled.Settings, "Settings")
+            }
+        }
     )
 }
 

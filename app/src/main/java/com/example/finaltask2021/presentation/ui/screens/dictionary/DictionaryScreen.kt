@@ -4,9 +4,12 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.example.finaltask2021.common.Process
 import com.example.finaltask2021.common.TAG
 import com.example.finaltask2021.common.UiState
@@ -60,13 +64,14 @@ fun DictionaryScreen(
                             viewModel.onSearch(it)
                         }
                     )
+                    Spacer(modifier = Modifier.padding(10.dp))
                     LazyColumn(
                         verticalArrangement = Arrangement.Top
                     ) {
-                        items(wordsList) { word ->
+                        itemsIndexed(wordsList) { id, word ->
                             ExpandableWordCard(
                                 word = word,
-                                onCardArrowClick = { viewModel.onCardArrowClicked(word.word) },
+                                onCardArrowClick = { viewModel.onCardArrowClicked(id) },
                                 onSaveNewDefinition = { newDefinition ->
                                     viewModel.saveWord(
                                         Word(
@@ -76,7 +81,11 @@ fun DictionaryScreen(
                                         )
                                     )
                                 },
-                                expanded = expandedCardIds.value.contains(word.word),
+                                onDeleteWord = { wordToDelete ->
+                                    if (viewModel.isWordCardExpended(id)) viewModel.onCardArrowClicked(id)
+                                    viewModel.deleteWord(wordToDelete)
+                                },
+                                expanded = expandedCardIds.value.contains(id),
                             )
                         }
                     }

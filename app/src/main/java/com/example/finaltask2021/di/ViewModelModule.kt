@@ -10,8 +10,8 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { MainViewModel(get()) }
-    viewModel { AddNoteViewModel() }
+    viewModel { AddNoteViewModel(get()) }
     viewModel { WordViewModel(get(), get()) }
-    viewModel { DictionaryViewModel(get(), get()) }
+    viewModel { DictionaryViewModel(get(), get(), get()) }
     viewModel { AboutViewModel() }
 }

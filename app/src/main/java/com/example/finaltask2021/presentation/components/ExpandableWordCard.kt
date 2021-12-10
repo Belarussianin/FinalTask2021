@@ -19,7 +19,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,17 +27,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,15 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,6 +68,7 @@ fun ExpandableWordCard(
     word: Word,
     onCardArrowClick: () -> Unit,
     onSaveNewDefinition: (String) -> Unit,
+    onDeleteWord: (String) -> Unit,
     expanded: Boolean,
 ) {
     val transitionState = remember {
@@ -147,10 +139,12 @@ fun ExpandableWordCard(
             }
             ExpandableContent(
                 definition = word.definition ?: "Empty",
-                visible = expanded
-            ) { newDefinition ->
-                onSaveNewDefinition(newDefinition)
-            }
+                visible = expanded,
+                onSaveNewDefinition = { newDefinition ->
+                    onSaveNewDefinition(newDefinition)
+                },
+                onDeleteWord = { onDeleteWord(word.word) }
+            )
         }
     }
 }
@@ -191,9 +185,9 @@ fun CardTitle(title: String) {
 fun ExpandableContent(
     definition: String,
     visible: Boolean = true,
-    onSaveNewDefinition: (String) -> Unit
+    onSaveNewDefinition: (String) -> Unit,
+    onDeleteWord: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
     val enterFadeIn = remember {
         fadeIn(
             animationSpec = TweenSpec(
@@ -221,7 +215,12 @@ fun ExpandableContent(
         enter = enterExpand + enterFadeIn,
         exit = exitCollapse + exitFadeOut
     ) {
-        Column(modifier = Modifier.padding(8.dp).fillMaxWidth(), horizontalAlignment = Alignment.Start) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.Start
+        ) {
             Spacer(modifier = Modifier.wrapContentHeight())
             SelectionContainer {
                 Text(
@@ -233,32 +232,34 @@ fun ExpandableContent(
             }
             Spacer(modifier = Modifier.wrapContentHeight())
             var text by remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = text,
-                onValueChange = {
+
+            AddTextField(
+                label = "New value",
+                onChange = {
                     text = it
-                },
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text("New value")
-                },
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.moveFocus(FocusDirection.Down)
-                }),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-                singleLine = true,
-                maxLines = 1
+                }
             )
             Spacer(modifier = Modifier.wrapContentHeight())
-                Button(modifier = Modifier.align(Alignment.End), onClick = {
-                    onSaveNewDefinition(text)
-                    text = ""
-                }) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = {
+                        onDeleteWord()
+                    }
+                ) {
+                    Text(text = "Delete")
+                }
+                Button(
+                    onClick = {
+                        onSaveNewDefinition(text)
+                        text = ""
+                    }
+                ) {
                     Text(text = "Enter")
                 }
             }
+        }
     }
 }

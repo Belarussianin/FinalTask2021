@@ -62,7 +62,7 @@ class WordViewModel(
         saveWord(word)
     }
 
-    fun onLeftSwipe(word: Word) {
+    fun onLeftSwipe() {
         getWord()
     }
 }

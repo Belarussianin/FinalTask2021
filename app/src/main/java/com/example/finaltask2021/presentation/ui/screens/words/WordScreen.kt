@@ -39,7 +39,7 @@ fun WordScreen(
             onReady = {
                 Log.e(TAG, "WordScreen: ${wordState.value.data} ${wordState.value.error}")
                 SwipableWordCard(it, {
-                    viewModel.onLeftSwipe(it)
+                    viewModel.onLeftSwipe()
                 }, {
                     viewModel.onRightSwipe(it)
                 })

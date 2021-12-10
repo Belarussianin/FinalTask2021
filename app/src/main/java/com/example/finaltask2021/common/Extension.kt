@@ -79,39 +79,40 @@ fun <T> UiState<T>.Process(
     }
 }
 
-@Composable
-fun Activity.windowSize(): DpSize {
-    val configuration = LocalConfiguration.current
-    val windowMetrics = remember(configuration) {
-        WindowMetricsCalculator.getOrCreate()
-            .computeCurrentWindowMetrics(this)
-    }
-    return with(LocalDensity.current) {
-        windowMetrics.bounds.toComposeRect().size.toDpSize()
-    }
-}
-
-@Composable
-fun Activity.rememberWindowSize() {
-    val configuration = LocalConfiguration.current
-    val windowMetrics = remember(configuration) {
-        WindowMetricsCalculator.getOrCreate()
-            .computeCurrentWindowMetrics(this)
-    }
-    val windowDpSize = with(LocalDensity.current) {
-        windowMetrics.bounds.toComposeRect().size.toDpSize()
-    }
-    val widthWindowSizeClass = when {
-        windowDpSize.width < 600.dp -> WindowSize.COMPACT
-        windowDpSize.width < 840.dp -> WindowSize.MEDIUM
-        else -> WindowSize.EXPANDED
-    }
-
-    val heightWindowSizeClass = when {
-        windowDpSize.height < 480.dp -> WindowSize.COMPACT
-        windowDpSize.height < 900.dp -> WindowSize.MEDIUM
-        else -> WindowSize.EXPANDED
-    }
-
-    // Use widthWindowSizeClass and heightWindowSizeClass
-}
+//Left for best times
+//@Composable
+//fun Activity.windowSize(): DpSize {
+//    val configuration = LocalConfiguration.current
+//    val windowMetrics = remember(configuration) {
+//        WindowMetricsCalculator.getOrCreate()
+//            .computeCurrentWindowMetrics(this)
+//    }
+//    return with(LocalDensity.current) {
+//        windowMetrics.bounds.toComposeRect().size.toDpSize()
+//    }
+//}
+//
+//@Composable
+//fun Activity.rememberWindowSize() {
+//    val configuration = LocalConfiguration.current
+//    val windowMetrics = remember(configuration) {
+//        WindowMetricsCalculator.getOrCreate()
+//            .computeCurrentWindowMetrics(this)
+//    }
+//    val windowDpSize = with(LocalDensity.current) {
+//        windowMetrics.bounds.toComposeRect().size.toDpSize()
+//    }
+//    val widthWindowSizeClass = when {
+//        windowDpSize.width < 600.dp -> WindowSize.COMPACT
+//        windowDpSize.width < 840.dp -> WindowSize.MEDIUM
+//        else -> WindowSize.EXPANDED
+//    }
+//
+//    val heightWindowSizeClass = when {
+//        windowDpSize.height < 480.dp -> WindowSize.COMPACT
+//        windowDpSize.height < 900.dp -> WindowSize.MEDIUM
+//        else -> WindowSize.EXPANDED
+//    }
+//
+//    // Use widthWindowSizeClass and heightWindowSizeClass
+//}

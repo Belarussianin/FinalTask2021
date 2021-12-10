@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -17,11 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.example.finaltask2021.common.Process
 import com.example.finaltask2021.common.TAG
 import com.example.finaltask2021.domain.model.Word
+import com.example.finaltask2021.presentation.components.AddTextField
 import com.example.finaltask2021.presentation.components.SearchTextField
 import com.example.finaltask2021.presentation.components.words.WordCard
+import com.example.finaltask2021.presentation.navigation.MainNavTargets
 import com.example.finaltask2021.presentation.ui.screens.words.WordViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -30,51 +35,28 @@ fun AddNoteScreen(
     viewModel: AddNoteViewModel = getViewModel(),
     onNavigateClick: (String) -> Unit = {}
 ) {
-//    val searchTextFieldState = remember { mutableStateOf(TextFieldValue("")) }
-//    val searchResultState = viewModel.wordState.collectAsState()
-//
-//    Column(
-//        modifier = Modifier.fillMaxSize(),
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            Button(
-//                onClick = {
-//                    searchResultState.value.data?.let { word -> viewModel.saveWord(word) }
-//                },
-//                content = {
-//                    Text(text = "Save")
-//                }
-//            )
-//            Button(
-//                onClick = {
-//                    viewModel.getWord(searchTextFieldState.value.annotatedString.text)
-//                },
-//                content = {
-//                    Text(text = "Enter")
-//                }
-//            )
-//        }
-//        searchResultState.value.Process(
-//            onLoading = {
-//                CircularProgressIndicator()
-//            },
-//            onReady = {
-//                WordCard(word = it)
-//            },
-//            onError = {
-//                Column {
-//                    Text(searchResultState.value.error)
-//                    Button(onClick = { viewModel.onRightSwipe(Word("")) }) {
-//                        Text("Refresh")
-//                    }
-//                }
-//            }
-//        )
-//    }
+    val newWordTextFieldState = remember { mutableStateOf(TextFieldValue("")) }
+    val newDefinitionTextFieldState = remember { mutableStateOf(TextFieldValue("")) }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AddTextField(label = "Word", state = newWordTextFieldState)
+        Spacer(modifier = Modifier.height(10.dp))
+        AddTextField(label = "Definition", state = newDefinitionTextFieldState)
+
+        Button(onClick = {
+            viewModel.saveNewWord(
+                word = newWordTextFieldState.value.text,
+                definition = newDefinitionTextFieldState.value.text
+            )
+            newWordTextFieldState.value = newWordTextFieldState.value.copy("")
+            newDefinitionTextFieldState.value = newDefinitionTextFieldState.value.copy("")
+        }) {
+            Text(text = "Enter")
+        }
+    }
 
     SideEffect {
         Log.e(TAG, "AddNoteScreen: Composed")

@@ -39,7 +39,7 @@ fun AddTextField(
             .wrapContentHeight(),
         label = {
             if (label != null) {
-                Text("${label.capitalize()}: ${state.value.text}")
+                Text("${label.replaceFirstChar { it.uppercase() }}: ${state.value.text}")
             }
         },
         keyboardOptions = KeyboardOptions(
@@ -49,7 +49,7 @@ fun AddTextField(
         ),
         keyboardActions = KeyboardActions(onDone = {
             keyboardManager?.hide()
-            focusManager.moveFocus(FocusDirection.Next)
+            focusManager.moveFocus(FocusDirection.Down)
             onAdd(state.value.text)
         }),
         singleLine = true,

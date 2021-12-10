@@ -1,10 +1,10 @@
 package com.example.finaltask2021.presentation.ui.screens.dictionary
 
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.finaltask2021.common.UiState
 import com.example.finaltask2021.domain.model.Word
+import com.example.finaltask2021.domain.use_case.DeleteWordUseCase
 import com.example.finaltask2021.domain.use_case.GetAllWordsUseCase
 import com.example.finaltask2021.domain.use_case.SaveWordUseCase
 import kotlinx.coroutines.flow.Flow
@@ -12,25 +12,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 class DictionaryViewModel(
     private val getAllWordsUseCase: GetAllWordsUseCase,
-    private val saveWordUseCase: SaveWordUseCase
+    private val saveWordUseCase: SaveWordUseCase,
+    private val deleteWordUseCase: DeleteWordUseCase
 ) : ViewModel() {
 
     private val _wordListState = MutableStateFlow<UiState<List<Word>>>(UiState())
@@ -56,8 +47,8 @@ class DictionaryViewModel(
         }
     }
 
-    private val _expandedCardWordsList = MutableStateFlow(listOf<String>())
-    val expandedCardWordsList: StateFlow<List<String>> get() = _expandedCardWordsList
+    private val _expandedCardWordsList = MutableStateFlow(listOf<Int>())
+    val expandedCardWordsList: StateFlow<List<Int>> get() = _expandedCardWordsList
 
     init {
         getAllWords()
@@ -80,15 +71,23 @@ class DictionaryViewModel(
         _searchText.value = text
     }
 
-    fun onCardArrowClicked(cardId: String) {
+    fun onCardArrowClicked(cardId: Int) {
         _expandedCardWordsList.value = _expandedCardWordsList.value.toMutableList().also { list ->
             if (list.contains(cardId)) list.remove(cardId) else list.add(cardId)
         }
     }
 
+    fun isWordCardExpended(cardId: Int) = _expandedCardWordsList.value.contains(cardId)
+
     fun saveWord(word: Word) {
         viewModelScope.launch {
-            saveWordUseCase.invoke(word)
+            saveWordUseCase(word)
+        }
+    }
+
+    fun deleteWord(word: String) {
+        viewModelScope.launch {
+            deleteWordUseCase(word)
         }
     }
 }
