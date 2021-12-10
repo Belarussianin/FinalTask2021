@@ -73,6 +73,7 @@ fun DictionaryScreen(
                                 word = word,
                                 onCardArrowClick = { viewModel.onCardArrowClicked(id) },
                                 onSaveNewDefinition = { newDefinition ->
+                                    if (viewModel.isWordCardExpended(id)) viewModel.onCardArrowClicked(id)
                                     viewModel.saveWord(
                                         Word(
                                             word = word.word,

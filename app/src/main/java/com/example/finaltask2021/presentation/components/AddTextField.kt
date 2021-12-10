@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -22,7 +23,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 @Composable
 fun AddTextField(
     label: String? = "Text: ",
-    state: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue()),
+    state: MutableState<TextFieldValue>,
     onChange: (String) -> Unit = {},
     onAdd: (String) -> Unit = {}
 ) {
@@ -31,7 +32,7 @@ fun AddTextField(
     OutlinedTextField(
         value = state.value,
         onValueChange = {
-            state.value = it.copy(it.text.replace("\n", ""))
+            state.value = it.copy(it.text)//.replace("\n", ""))
             onChange(state.value.text)
         },
         modifier = Modifier
@@ -39,7 +40,7 @@ fun AddTextField(
             .wrapContentHeight(),
         label = {
             if (label != null) {
-                Text("${label.replaceFirstChar { it.uppercase() }}: ${state.value.text}")
+                Text("${label.capitalize()}: ${state.value.text}")
             }
         },
         keyboardOptions = KeyboardOptions(

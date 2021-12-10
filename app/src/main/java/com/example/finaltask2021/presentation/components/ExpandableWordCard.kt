@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -231,13 +232,11 @@ fun ExpandableContent(
                 )
             }
             Spacer(modifier = Modifier.wrapContentHeight())
-            var text by remember { mutableStateOf("") }
+            val newDefinitionState = remember { mutableStateOf(TextFieldValue("")) }
 
             AddTextField(
-                label = "New value",
-                onChange = {
-                    text = it
-                }
+                state = newDefinitionState,
+                label = "New value"
             )
             Spacer(modifier = Modifier.wrapContentHeight())
             Row(
@@ -253,8 +252,8 @@ fun ExpandableContent(
                 }
                 Button(
                     onClick = {
-                        onSaveNewDefinition(text)
-                        text = ""
+                        onSaveNewDefinition(newDefinitionState.value.text)
+                        newDefinitionState.value = newDefinitionState.value.copy("")
                     }
                 ) {
                     Text(text = "Enter")
